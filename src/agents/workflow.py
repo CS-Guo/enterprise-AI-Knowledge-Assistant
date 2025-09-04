@@ -1,7 +1,6 @@
 from typing import Dict, Any, List
 from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, END
-# from langgraph.prebuilt import ToolNode  # 未使用，暂时注释
 import logging
 from uuid import uuid4
 
@@ -42,7 +41,6 @@ def create_workflow():
             logger.info(f"[{state['request_id']}] 查询分析完成: {intent_analysis}")
             return state
         except Exception as e:
-            # 不中断流程，使用回退意图分析，避免后续节点因缺少category报错
             logger.error(f"查询分析节点错误，使用回退策略: {e}")
             state["iteration_count"] = state.get("iteration_count", 0) + 1
             # 回退：简单规则确定意图
@@ -194,7 +192,7 @@ def create_workflow():
                 
                 state["actions"] = [action]
                 
-                # 保存工具执行结果到状态中，等待上下文整合（仅成功时）
+                # 保存工具执行结果到状态中，等待上下文整合
                 if tool_result["success"]:
                     state["tool_result"] = tool_result
                 else:
