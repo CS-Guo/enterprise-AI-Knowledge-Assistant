@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+
+# Data and artifacts
+vectordb/
+.db/
+.db*/
+*.sqlite3
+*.sqlite
+
+# Uploaded/processed documents
+data/
+!data/.gitkeep
+
+# OS / Editor junk
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Cache and test outputs
+.pytest_cache/
+.cache/
+
+# Streamlit and build artifacts
+.streamlit/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local config overrides
+config/local_settings.py
