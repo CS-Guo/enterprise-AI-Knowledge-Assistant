@@ -4,12 +4,12 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # OpenAI配置
-    openai_api_key: Optional[str] = "sk-BdFxZ0abG1APGay9jk6QUf47xARiNQrqDhgTG6y2bAS2ruaz"
+    openai_api_key: Optional[str] = "sk-BdF********************AS2ruaz"
     openai_model: str = "GLM-4.5-Flash"
     base_url: str = "https://www.dmxapi.cn/v1"
     
     # 向量数据库配置
-    vector_db_path: str = "/Users/guoshengfeng/study/enterprise-AI-Knowledge-Assistant/vectordb"
+    vector_db_path: str = "/Users/****/study/enterprise-AI-Knowledge-Assistant/vectordb"
     embedding_model: str = "text-embedding-3-small"
     
     # API配置
@@ -25,8 +25,8 @@ class Settings(BaseSettings):
     temperature: float = 0.1
     
     # 邮件配置
-    email_sender: str = "208621381@qq.com"
-    email_password: str = "lgntvtzvjpzbbibc"
+    email_sender: str = "208****1@qq.com"
+    email_password: str = "lgn****zbbibc"
     email_smtp_server: str = "smtp.qq.com"
     email_smtp_port: int = 587
     default_recipient: str = "example@company.com"
