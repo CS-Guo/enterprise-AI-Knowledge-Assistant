@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # OpenAI配置
-    openai_api_key: Optional[str] = "sk-BdFxZ0abG1APGay9jk6QUf47xARiNQrqDhgTG6y2bAS2ruaz"
+    openai_api_key: Optional[str] = "sk-BdFxZ0abG1APGay9z"
     openai_model: str = "GLM-4.5-Flash"
     base_url: str = "https://www.dmxapi.cn/v1"
     
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     
     # 邮件配置
     email_sender: str = "208621381@qq.com"
-    email_password: str = "lgntvtzvjpzbbibc"
+    email_password: str = "lgntvibc"
     email_smtp_server: str = "smtp.qq.com"
     email_smtp_port: int = 587
     default_recipient: str = "example@company.com"
