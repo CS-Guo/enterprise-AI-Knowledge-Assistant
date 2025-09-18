@@ -326,10 +326,33 @@ def render_message(message: Dict[str, Any]):
         </div>
         """, unsafe_allow_html=True)
     elif role == "assistant":
+        provenance = message.get("provenance")
+        is_open = bool(message.get("open_domain_fallback"))
+        disclaimers = message.get("disclaimers") or []
+        badge_html = ""
+        if is_open:
+            source_text = f"来源: {provenance}" if provenance else "来源: 未知"
+            badge_html = f"""
+            <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <span style="display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; background:#e3f2fd; color:#1f77b4; border:1px solid rgba(31,119,180,0.35);">🌐 开放域回答</span>
+                <span style="font-size:12px; color:#6c757d;">{source_text}</span>
+            </div>
+            """
+        disclaimers_html = ""
+        if disclaimers:
+            items = "".join([f"<li>{d}</li>" for d in disclaimers])
+            disclaimers_html = f"""
+            <div style="margin-top:8px; font-size:12px; color:#6c757d; background:#fff8e1; border-left:3px solid #ffc107; padding:8px 10px; border-radius:6px;">
+                <strong>提示：</strong>
+                <ul style="margin: 4px 0 0 1rem;">{items}</ul>
+            </div>
+            """
         st.markdown(f"""
         <div class="chat-message assistant-message">
             <strong>🤖 助手:</strong><br>
             {content}
+            {badge_html}
+            {disclaimers_html}
         </div>
         """, unsafe_allow_html=True)
     elif role == "tool":
@@ -675,7 +698,10 @@ def send_message(message: str):
             if assistant_response.strip():
                 st.session_state.messages.append({
                     "role": "assistant", 
-                    "content": assistant_response
+                    "content": assistant_response,
+                    "open_domain_fallback": response.get("open_domain_fallback", False),
+                    "provenance": response.get("provenance"),
+                    "disclaimers": response.get("disclaimers") or []
                 })
             
             # 显示工具执行结果

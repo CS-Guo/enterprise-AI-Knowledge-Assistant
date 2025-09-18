@@ -245,3 +245,30 @@ class VectorStore:
         except Exception as e:
             logger.error(f"清空集合失败: {e}")
             return False
+
+    # 新增：列出文档用于词法检索候选池
+    def list_documents(self, filter_dict: Optional[Dict[str, Any]] = None, limit: int = 500) -> List[Dict[str, Any]]:
+        """列出集合中的文档文本和元数据（不返回向量）。仅用于小规模语料的词法检索。
+        返回形如 {"content": str, "metadata": dict} 的列表。
+        """
+        try:
+            # Chroma get 接口返回所有匹配条目（受limit限制）
+            # include 不包含 embeddings 以节省内存
+            results = self.collection.get(
+                where=filter_dict,
+                include=["documents", "metadatas"],
+                limit=limit,
+            )
+            documents = results.get("documents") or []
+            metadatas = results.get("metadatas") or []
+            items: List[Dict[str, Any]] = []
+            for doc, meta in zip(documents, metadatas):
+                items.append({
+                    "content": doc,
+                    "metadata": meta or {},
+                })
+            logger.info(f"列出文档完成 where={filter_dict} limit={limit} 返回={len(items)}")
+            return items
+        except Exception as e:
+            logger.error(f"列出文档失败: {e}")
+            return []

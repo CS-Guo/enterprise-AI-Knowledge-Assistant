@@ -17,6 +17,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from src.mcp.email_tools import EmailSendTool, EmailTemplateTool
 from src.mcp.calendar_tools import CalendarEventTool, SchedulingTool
 from src.mcp.file_tools import FileSearchTool, FileReadTool, FileWriteTool
+# 新增：用于复合工具链干跑
+from src.agents.knowledge_agent import KnowledgeAgent
 
 
 class ToolTester:
@@ -129,6 +131,31 @@ class ToolTester:
         except Exception as e:
             self.log_test("文件搜索", False, f"异常: {e}")
 
+    async def test_composite_calendar_email(self):
+        """复合工具链干跑：先创建会议，再尝试发送邮件（无凭据 -> 邮件可能失败，但链路应整体成功）。"""
+        try:
+            agent = KnowledgeAgent()
+            intent = {
+                "tool_category": "calendar|email",
+                "original_query": "帮我安排明天下午3点和张三的会议，并发送邮件通知他。"
+            }
+            result = await agent.execute_tool(intent)
+            # 断言结构与链路
+            success = bool(result and result.get("success") is True)
+            payload = result.get("result", {}) if isinstance(result, dict) else {}
+            steps = payload.get("steps", []) if isinstance(payload, dict) else []
+            executed = payload.get("executed", [])
+            # 至少包含 calendar 与 email 两步
+            has_calendar = any(s.get("category") == "calendar" for s in steps)
+            has_email = any(s.get("category") == "email" for s in steps)
+            # 至少有一步成功（应为 calendar 创建）
+            ok_step = any(s.get("status") == "ok" for s in steps)
+            ok = success and has_calendar and has_email and ok_step and ("calendar" in executed and "email" in executed)
+            msg = f"链路: {executed}, 步骤数: {len(steps)}"
+            self.log_test("复合工具链：calendar|email 干跑", ok, msg)
+        except Exception as e:
+            self.log_test("复合工具链：calendar|email 干跑", False, f"异常: {e}")
+
     def cleanup(self):
         if self.temp_dir and os.path.exists(self.temp_dir):
             import shutil
@@ -153,6 +180,8 @@ async def _async_run_all():
         await tester.test_email_tools()
         await tester.test_calendar_tools()
         await tester.test_file_tools()
+        # 新增：复合工具链验证
+        await tester.test_composite_calendar_email()
     finally:
         tester.cleanup()
         tester.print_summary()

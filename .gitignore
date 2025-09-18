@@ -14,6 +14,7 @@ logs/
 
 # Data and artifacts
 vectordb/
+db/
 .db/
 .db*/
 *.sqlite3

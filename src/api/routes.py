@@ -28,6 +28,11 @@ class ChatResponse(BaseModel):
     intent_analysis: Optional[Dict[str, Any]] = None
     documents_used: Optional[List[str]] = []
     actions_performed: Optional[List[Dict[str, Any]]] = []
+    open_domain_fallback: Optional[bool] = False
+    provenance: Optional[str] = None
+    disclaimers: Optional[str] = None
+    # 新增：来源清单（用于前端展示引用）
+    sources: Optional[List[Dict[str, Any]]] = []
 
 class ToolExecutionRequest(BaseModel):
     tool_category: str  # file, email, calendar
@@ -103,7 +108,11 @@ async def chat(request: ChatRequest):
             conversation_id=conversation_id,
             intent_analysis=result.get("intent_analysis"),
             documents_used=result.get("documents", []),
-            actions_performed=result.get("actions", [])
+            actions_performed=result.get("actions", []),
+            open_domain_fallback=bool(result.get("open_domain_fallback", False)),
+            provenance=result.get("provenance"),
+            disclaimers=result.get("disclaimers", ""),
+            sources=result.get("sources", [])
         )
         
         logger.info(f"聊天请求处理完成，会话ID: {conversation_id}")
