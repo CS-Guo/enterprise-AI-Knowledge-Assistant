@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     min_rag_similarity: float = 0.2
     
     # 邮件配置
-    email_sender: str = "208621381@qq.com"
+    email_sender: str = "381@qq.com"
     email_password: str = "lgntvibc"
     email_smtp_server: str = "smtp.qq.com"
     email_smtp_port: int = 587
